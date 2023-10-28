@@ -10,17 +10,15 @@ def parse_methods(dir: str, lang: str):
 
     match lang:
         case "java":
-            target_method = _parse_java
-            target_ext = ".java"
+            target_method, target_ext = _parse_java, ".java"
         case "go" | "golang":
-            target_method = _parse_go
-            target_ext = ".go"
+            target_method, target_ext = _parse_go, ".go"
         case "rust":
-            target_method = _parse_rust
-            target_ext = ".rs"
+            target_method, target_ext = _parse_rust, ".rs"
         case _:
             console.log(f"[[red]ERRO[/red]]invalid language specified => '{lang}'")
             return
+
     console.print(f"target_method = {target_method}")
     console.print(f"target_ext    = {target_ext}")
 
