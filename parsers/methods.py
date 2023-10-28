@@ -28,12 +28,12 @@ def parse_methods(dir: str, lang: str):
 
 
 def _parse_java(_file: str):
-    console.print(f"[[green]INFO[/green]] parsing methods in file => '{_file}'")
+    console.print(f"[[magenta]INFO[/magenta]] parsing methods in file => '{_file}'")
 
 
 def _parse_go(_file: str):
-    console.print(f"[[green]INFO[/green]] parsing methods in file => '{_file}'")
+    console.print(f"[[magenta]INFO[/magenta]] parsing methods in file => '{_file}'")
 
 
 def _parse_rust(_file: str):
-    console.print(f"[[green]INFO[/green]] parsing methods in file => '{_file}'")
+    console.print(f"[[magenta]INFO[/magenta]] parsing methods in file => '{_file}'")

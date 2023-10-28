@@ -25,7 +25,7 @@ def main():
     elif not lang:
         console.log("<[ red]ERRO[/ red]> must provide language to parse methods for")
     else:
-        console.log(f"<[green]INFO[/green]> scanning {dir} for `.java` files...")
+        console.log(f"<[magenta]INFO[/magenta]> scanning {dir} for `.java` files...")
         parse_methods(dir, lang)
 
 
