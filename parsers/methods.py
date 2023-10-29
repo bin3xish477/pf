@@ -7,9 +7,9 @@ from re import finditer, DOTALL, VERBOSE, MULTILINE
 console = Console()
 
 JAVA_METHOD_PROTOTYPE = r"""
-    (?P<access_modifier>public|private|protected|default)\s
-    ((?P<modifier>static|synchronized|final|abstract|native)\s)?
-    (?P<return_type>[a-zA-Z\[\]<>]+)\s
+    (?P<access_modifier>public|private|protected|default)\s+
+    ((?P<modifier>static|synchronized|final|abstract|native)\s+)?
+    (?P<return_type>[a-zA-Z\[\]<>]+)\s+
     (?P<method_name>[a-zA-Z_$][a-zA-Z0-9_$]+)(\s+)?
     (?P<params>\(([^)]*)\))
 """
