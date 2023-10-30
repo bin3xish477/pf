@@ -14,6 +14,11 @@ JAVA_METHOD_PROTOTYPE = r"""
     (?P<params>\(([^)]*)\))
 """
 
+GO_FUNC_PROTOTYPE = r"""
+    func\s+\((?P<receiver_params>[^)]+)\)\s+
+    (?P<function_name>[_a-zA-Z][_a-zA-Z0-9]+)\s+
+"""
+
 
 def parse_methods(dir: str, lang: str):
     target_method = None
@@ -62,9 +67,15 @@ def _parse_java(_file: str):
             )
 
 
+# example function prototype
+# func FunctionName [T any] (a, b T) T {}
+# example receiver function
+# func (r Rectangle) Area() float64 {}
+# TODO: remember to account for when generics and return types are not used
+# and also that return can be more than one enclosed in paranthesis.
 def _parse_go(_file: str):
-    console.print(f"[[magenta]INFO[/magenta]] parsing methods in file => '{_file}'")
+    pass
 
 
 def _parse_rust(_file: str):
-    console.print(f"[[magenta]INFO[/magenta]] parsing methods in file => '{_file}'")
+    pass
