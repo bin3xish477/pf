@@ -10,7 +10,7 @@ JAVA_METHOD_PROTOTYPE = r"""
     ((?P<modifier>static|synchronized|final|abstract|native)\s+)?
     (?P<return_type>[a-zA-Z\[\]<>]+)\s+
     (?P<method_name>[a-zA-Z_$][a-zA-Z0-9_$]+)(\s+)?
-    (?P<params>\(([^)]*)\))
+    (?P<params>\(([^):]*)\))
 """
 
 GO_FUNC_PROTOTYPE = r"""
