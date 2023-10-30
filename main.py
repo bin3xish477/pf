@@ -9,7 +9,9 @@ console = Console()
 
 def _parse_args():
     parser = ArgumentParser()
-    parser.add_argument("--dir", "-d", help="directory to search for `.java` files")
+    parser.add_argument(
+        "--dir", "-d", default=".", help="directory to search for `.java` files"
+    )
     parser.add_argument("--lang", "-l", help="language to parse methods for")
     parser.add_argument(
         "--max-workers", "-t", default=5, help="numbers of threads to use"
