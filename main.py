@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from rich.console import Console
 
-from parsers.methods import parse_methods
+from parsers.methods import Parser
 
 
 console = Console()
@@ -11,6 +11,7 @@ def _parse_args():
     parser = ArgumentParser()
     parser.add_argument("--dir", "-d", help="directory to search for `.java` files")
     parser.add_argument("--lang", "-l", help="language to parse methods for")
+    parser.add_argument("--max-workers", "-t", help="numbers of threads to use")
     return parser.parse_args()
 
 
@@ -18,6 +19,9 @@ def main():
     args = _parse_args()
     dir = args.dir
     lang = args.lang
+    max_workers = args.max_workers
+
+    parser = Parser(dir, lang, max_workers)
 
     if not dir:
         console.log("<[red]ERRO[/red]> must provide directory to scan")
@@ -26,7 +30,7 @@ def main():
         console.log("<[ red]ERRO[/ red]> must provide language to parse methods for")
     else:
         console.log(f"<[magenta]INFO[/magenta]> scanning {dir} for `.java` files...")
-        parse_methods(dir, lang)
+        parser.parse_methods()
 
 
 if __name__ == "__main__":

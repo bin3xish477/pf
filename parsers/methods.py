@@ -20,62 +20,65 @@ GO_FUNC_PROTOTYPE = r"""
 """
 
 
-def parse_methods(dir: str, lang: str):
-    target_method = None
-    target_ext = None
+class Parser:
+    def __init__(self, dir: str, lang: str, max_workers: int) -> None:
+        self.dir = dir
+        self.lang = lang
+        self.max_workers = max_workers
 
-    match lang:
-        case "java":
-            target_method, target_ext = _parse_java, ".java"
-        case "go" | "golang":
-            target_method, target_ext = _parse_go, ".go"
-        case "rust":
-            target_method, target_ext = _parse_rust, ".rs"
-        case _:
-            console.log(f"[[red]ERRO[/red]]invalid language specified => '{lang}'")
-            return
+    def parse_methods(self):
+        target_method = None
+        target_ext = None
 
-    console.log(f"target_method = {target_method}")
-    console.log(f"target_ext    = {target_ext}")
+        match self.lang:
+            case "java":
+                target_method, target_ext = self._parse_java, ".java"
+            case "go" | "golang":
+                target_method, target_ext = self._parse_go, ".go"
+            case "rust":
+                target_method, target_ext = self._parse_rust, ".rs"
+            case _:
+                console.log(f"[[red]ERRO[/red]]invalid language specified => '{lang}'")
+                return
 
-    target_files = [
-        f"{_file.parent}{sep}{_file.name}"
-        for _file in Path(dir).rglob(f"*{target_ext}")
-        if _file.is_file()
-    ]
-    console.log(f"total_files    = {len(target_files)}")
+        console.log(f"target_method = {target_method}")
+        console.log(f"target_ext    = {target_ext}")
 
-    with ThreadPoolExecutor(max_workers=5) as executor:
-        executor.map(target_method, target_files)
+        target_files = [
+            f"{_file.parent}{sep}{_file.name}"
+            for _file in Path(self.dir).rglob(f"*{target_ext}")
+            if _file.is_file()
+        ]
+        console.log(f"total_files    = {len(target_files)}")
 
+        with ThreadPoolExecutor(max_workers=self.max_workers) as executor:
+            executor.map(target_method, target_files)
 
-def _parse_java(_file: str):
-    with open(_file) as f:
-        code = f.read()
-        for match in finditer(
-            JAVA_METHOD_PROTOTYPE, code, DOTALL | MULTILINE | VERBOSE
-        ):
-            access_modifier = match.group("access_modifier")
-            modifier = match.group("modifier")
-            return_type = match.group("return_type")
-            method_name = match.group("method_name")
-            params = match.group("params")
-            console.print(
-                f"{_file}::[red]{access_modifier}[/red] [yellow]{modifier}[/yellow] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
-                if modifier
-                else f"{_file}::[red]{access_modifier}[/red] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
-            )
+    def _parse_java(self, _file: str):
+        with open(_file) as f:
+            code = f.read()
+            for match in finditer(
+                JAVA_METHOD_PROTOTYPE, code, DOTALL | MULTILINE | VERBOSE
+            ):
+                access_modifier = match.group("access_modifier")
+                modifier = match.group("modifier")
+                return_type = match.group("return_type")
+                method_name = match.group("method_name")
+                params = match.group("params")
+                console.print(
+                    f"{_file}::[red]{access_modifier}[/red] [yellow]{modifier}[/yellow] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
+                    if modifier
+                    else f"{_file}::[red]{access_modifier}[/red] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
+                )
 
+    # example function prototype
+    # func FunctionName [T any] (a, b T) T {}
+    # example receiver function
+    # func (r Rectangle) Area() float64 {}
+    # TODO: remember to account for when generics and return types are not used
+    # and also that return can be more than one enclosed in paranthesis.
+    def _parse_go(self, _file: str):
+        pass
 
-# example function prototype
-# func FunctionName [T any] (a, b T) T {}
-# example receiver function
-# func (r Rectangle) Area() float64 {}
-# TODO: remember to account for when generics and return types are not used
-# and also that return can be more than one enclosed in paranthesis.
-def _parse_go(_file: str):
-    pass
-
-
-def _parse_rust(_file: str):
-    pass
+    def _parse_rust(self, _file: str):
+        pass
