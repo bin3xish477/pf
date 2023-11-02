@@ -9,13 +9,16 @@ JAVA_METHOD_PROTOTYPE = r"""
     (?P<access_modifier>public|private|protected|default)\s+
     ((?P<modifier>static|synchronized|final|abstract|native)\s+)?
     (?P<return_type>[a-zA-Z\[\]<>]+)\s+
-    (?P<method_name>[a-zA-Z_$][a-zA-Z0-9_$]+)(\s+)?
+    (?P<method_name>[a-zA-Z_$][a-zA-Z0-9_$]+)\s*
     (?P<params>\(([^):]*)\))
 """
 
 GO_FUNC_PROTOTYPE = r"""
-    func\s+\((?P<receiver_params>[^)]+)\)\s+
-    (?P<function_name>[_a-zA-Z][_a-zA-Z0-9]+)\s+
+    func\s+(?P<receiver_params>\([^)]+\)\s+)?
+    (?P<func_name>[_a-zA-Z][_a-zA-Z0-9]+)\s*
+    (?P<type_param_list>[\[a-z\sA-Z\]]+)?\s*
+    (?P<func_params>\([^)]*\))\s*
+    (?P<return_types>\([^)]*\)|[\w*\[\]]*)?
 """
 
 
@@ -68,19 +71,32 @@ class Parser:
                 method_name = match.group("method_name")
                 params = match.group("params")
                 self.console.print(
-                    f"{_file}::[red]{access_modifier}[/red] [yellow]{modifier}[/yellow] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
+                    f"{_file}::[red]{access_modifier}[/red] [yellow]{modifier}[/yellow] [blue]{return_type}[/blue] [green]{method_name}[/green]{params} {{}}"
                     if modifier
-                    else f"{_file}::[red]{access_modifier}[/red] [blue]{return_type}[/blue] [green]{method_name}[/green]{params}"
+                    else f"{_file}::[red]{access_modifier}[/red] [blue]{return_type}[/blue] [green]{method_name}[/green]{params} {{}}"
                 )
 
-    # example function prototype
-    # func FunctionName [T any] (a, b T) T {}
-    # example receiver function
-    # func (r Rectangle) Area() float64 {}
-    # TODO: remember to account for when generics and return types are not used
-    # and also that return can be more than one enclosed in paranthesis.
     def _parse_go(self, _file: str):
-        pass
+        with open(_file) as f:
+            code = f.read()
+            for match in finditer(
+                GO_FUNC_PROTOTYPE, code, DOTALL | MULTILINE | VERBOSE
+            ):
+                receiver_params = match.group("receiver_params") or ""
+                func_name = match.group("func_name")
+                type_param_list = match.group("type_param_list") or ""
+                func_params = match.group("func_params")
+                return_types = match.group("return_types") or ""
+                s = f"{_file}::[red]func[/red] "
+                if receiver_params:
+                    s += f"[yellow]{receiver_params}[/yellow]"
+                s += f"[magenta]{func_name}[/magenta]"
+                if type_param_list:
+                    s += f"[blue]{type_param_list}[/blue]"
+                s += f"[green]{func_params}[/green]"
+                if return_types:
+                    s += f" [cyan]{return_types}[/cyan]"
+                self.console.print(f"{s} {{}}")
 
     def _parse_rust(self, _file: str):
         pass
