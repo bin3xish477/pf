@@ -10,7 +10,7 @@ console = Console()
 def _parse_args():
     parser = ArgumentParser()
     parser.add_argument(
-        "--dir", "-d", default=".", help="directory to search for `.java` files"
+        "--dir", "-d", default=".", help="directory to search for source files"
     )
     parser.add_argument("--lang", "-l", help="language to parse methods for")
     parser.add_argument(
@@ -27,13 +27,10 @@ def main():
 
     parser = Parser(dir, lang, max_workers)
 
-    if not dir:
-        console.log("<[red]ERRO[/red]> must provide directory to scan")
-        return
-    elif not lang:
-        console.log("<[ red]ERRO[/ red]> must provide language to parse methods for")
+    if not lang:
+        console.log("<[red]ERRO[/red]> must provide language to parse methods for")
     else:
-        console.log(f"<[magenta]INFO[/magenta]> scanning {dir} for `.java` files...")
+        console.log(f"<[magenta]INFO[/magenta]> scanning {dir} for `.{lang}` files...")
         parser.parse_methods()
 
 

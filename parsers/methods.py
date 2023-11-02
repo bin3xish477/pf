@@ -21,6 +21,12 @@ GO_FUNC_PROTOTYPE = r"""
     (?P<return_types>\([^)]*\)|[\w*\[\]]*)?
 """
 
+PYTHON_FUNC_PROTOTYPE = r"""
+    def\s+(?P<func_name>[\w]+)\s*
+    (?P<func_params>\([^)]*\))
+    (?P<return_types>(?:->)\s+[\w*\[\]]+)
+"""
+
 
 class Parser:
     def __init__(self, dir: str, lang: str, max_workers: int) -> None:
@@ -38,8 +44,8 @@ class Parser:
                 target_method, target_ext = self._parse_java, ".java"
             case "go" | "golang":
                 target_method, target_ext = self._parse_go, ".go"
-            case "rust":
-                target_method, target_ext = self._parse_rust, ".rs"
+            case "python":
+                target_method, target_ext = self._parse_python, ".py"
             case _:
                 self.console.log(
                     f"[[red]ERRO[/red]]invalid language specified => '{lang}'"
@@ -88,6 +94,7 @@ class Parser:
                 func_params = match.group("func_params")
                 return_types = match.group("return_types") or ""
                 s = f"{_file}::[red]func[/red] "
+
                 if receiver_params:
                     s += f"[yellow]{receiver_params}[/yellow]"
                 s += f"[magenta]{func_name}[/magenta]"
@@ -98,5 +105,10 @@ class Parser:
                     s += f" [cyan]{return_types}[/cyan]"
                 self.console.print(f"{s} {{}}")
 
-    def _parse_rust(self, _file: str):
-        pass
+    def _parse_python(self, _file: str):
+        with open(_file) as f:
+            code = f.read()
+            for match in finditer(
+                PYTHON_FUNC_PROTOTYPE, code, DOTALL | MULTILINE | VERBOSE
+            ):
+                pass
